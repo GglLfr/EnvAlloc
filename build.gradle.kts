@@ -9,16 +9,17 @@ import java.util.jar.JarOutputStream
 
 buildscript{
     val mindustryVersion = providers.gradleProperty("mindustryVersion").get()
+    val mindustry = if(mindustryVersion == "be") "MindustryBuilds" else "Mindustry"
 
     dependencies{
-        classpath("com.github.Anuken:Mindustry:$mindustryVersion")
+        classpath("Anuken:$mindustry:$mindustryVersion")
     }
 
     configurations.configureEach{
         // Resolve the correct Mindustry dependency.
         resolutionStrategy.eachDependency{
-            if(requested.group == "com.github.Anuken"){
-                useVersion(mindustryVersion)
+            if(requested.group == "Anuken" && requested.name.startsWith("Mindustry")){
+                useTarget("Anuken:$mindustry:$mindustryVersion")
             }
         }
     }
@@ -35,7 +36,7 @@ buildscript{
                 metadataSources{artifact()}
             }
             content{
-                includeVersion("com.github.Anuken", "Mindustry", mindustryVersion)
+                includeVersion("Anuken", mindustry, mindustryVersion)
             }
         }
     }
@@ -47,12 +48,13 @@ plugins{
 }
 
 val mindustryVersion = providers.gradleProperty("mindustryVersion").get()
+val mindustry = if(mindustryVersion == "be") "MindustryBuilds" else "Mindustry"
 
 val modName = providers.gradleProperty("modName").get()
 val modArtifact = providers.gradleProperty("modArtifact").get()
 
 fun mindustry(): String{
-    return "com.github.Anuken:Mindustry:$mindustryVersion"
+    return "Anuken:$mindustry:$mindustryVersion"
 }
 
 allprojects{
@@ -92,8 +94,8 @@ allprojects{
     configurations.configureEach{
         // Resolve the correct Mindustry dependency.
         resolutionStrategy.eachDependency{
-            if(requested.group == "com.github.Anuken"){
-                useVersion(mindustryVersion)
+            if(requested.group == "Anuken" && requested.name.startsWith("Mindustry")){
+                useTarget("Anuken:$mindustry:$mindustryVersion")
             }
         }
     }
@@ -117,7 +119,7 @@ allprojects{
                 metadataSources{artifact()}
             }
             content{
-                includeVersion("com.github.Anuken", "Mindustry", mindustryVersion)
+                includeVersion("Anuken", mindustry, mindustryVersion)
             }
         }
 
