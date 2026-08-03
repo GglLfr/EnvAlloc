@@ -1,4 +1,5 @@
 {
+    "name": "env-alloc",
     "displayName": "Env Alloc",
     "description": "Mindustry Java mod library to add new Env flags.",
     "version": "v0.1",
