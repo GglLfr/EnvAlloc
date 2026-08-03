@@ -1,9 +1,8 @@
-importPackage(java.lang.invoke)
+importPackage(java.lang.reflect)
 
 const type = Class.forName("env.EnvAlloc", true, Vars.mods.mainLoader())
-const lookup = MethodHandles.lookup().in(type)
-const create = lookup.findStatic(type, "create", MethodType.methodType(Integer.TYPE, java.lang.String))
+const create = type.getMethod("create", [java.lang.String])
 
 exports.create = function(name){
-    return create.invokeWithArguments([name])
+    return create.invoke(null, name)
 }
