@@ -1,7 +1,6 @@
 import arc.files.Fi
 import arc.util.OS
 import arc.util.serialization.Jval
-import ent.EntityAnnoExtension
 import java.io.BufferedWriter
 import java.io.FileOutputStream
 import java.util.jar.JarEntry
@@ -44,24 +43,16 @@ buildscript{
 
 plugins{
     java
-    id("com.github.GglLfr.EntityAnno") apply false
+    `maven-publish`
 }
 
 val mindustryVersion = providers.gradleProperty("mindustryVersion").get()
-val entVersion = providers.gradleProperty("entVersion").get()
 
 val modName = providers.gradleProperty("modName").get()
 val modArtifact = providers.gradleProperty("modArtifact").get()
-val modFetch = providers.gradleProperty("modFetch").get()
-val modGenSrc = providers.gradleProperty("modGenSrc").get()
-val modGen = providers.gradleProperty("modGen").get()
 
 fun mindustry(): String{
     return "com.github.Anuken:Mindustry:$mindustryVersion"
-}
-
-fun entity(module: String): String{
-    return "com.github.GglLfr.EntityAnno$module:$entVersion"
 }
 
 allprojects{
@@ -135,7 +126,6 @@ allprojects{
         mavenCentral()
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
         maven("https://oss.sonatype.org/content/repositories/releases/")
-        maven("https://raw.githubusercontent.com/GglLfr/EntityAnnoMaven/main")
     }
 
     tasks.withType<JavaCompile>().configureEach{
@@ -159,24 +149,39 @@ allprojects{
 }
 
 project(":"){
-    apply(plugin = "com.github.GglLfr.EntityAnno")
+    apply(plugin = "maven-publish")
+    java{
+        withJavadocJar()
+        withSourcesJar()
+    }
 
-    val localModName = modName
-    val localMindustryVersion = mindustryVersion
-    configure<EntityAnnoExtension>{
-        modName = localModName
-        mindustryVersion = localMindustryVersion
-        revisionDir = layout.projectDirectory.dir("revisions").asFile
-        fetchPackage = modFetch
-        genSrcPackage = modGenSrc
-        genPackage = modGen
+    group = "com.github.GglLfr"
+    publishing.publications.register<MavenPublication>("maven"){
+        from(components["java"])
+        artifactId = "EnvAlloc"
+        pom{
+            name = "EnvAlloc"
+            description = "Mindustry Java mod library to create new Env flags."
+
+            url = "https://github.com/GglLfr/EnvAlloc"
+            inceptionYear = "2026"
+
+            licenses{
+                license{
+                    name = "GPL-3.0-or-later"
+                    url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    distribution = "repo"
+                }
+            }
+
+            issueManagement{
+                system = "GitHub Issue Tracker"
+                url = "https://github.com/GglLfr/EnvAlloc/issues"
+            }
+        }
     }
 
     dependencies{
-        // Use the entity generation annotation processor.
-        compileOnly(entity(":entity"))
-        add("kapt", entity(":entity"))
-
         compileOnly(mindustry())
     }
 
