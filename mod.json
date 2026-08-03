@@ -1,0 +1,9 @@
+{
+    "displayName": "Mod Template",
+    "description": "Mindustry Java mod template, complete with EntityAnno integration.",
+    "version": "v1.0",
+    "minGameVersion": "159.7",
+    "author": "You",
+    "java": true,
+    "main": "template.ModTemplate"
+}
